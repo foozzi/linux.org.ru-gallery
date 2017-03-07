@@ -15,7 +15,7 @@ In Work (В работе)
 
 
 ## Donate me (Поддержи меня) ##
-[![donate](https://www.gpg4win.org/img/bitcoin-logo.png)]
+![donate](https://www.gpg4win.org/img/bitcoin-logo.png)
 178nA3zjkF5SzgMC6aZHWDW6p2YnDRfWkp
 
 ## Install (Установка) ##
