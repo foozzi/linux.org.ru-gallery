@@ -13,6 +13,11 @@ In Work (В работе)
 -------------
 [![asciicast](https://asciinema.org/a/0lygubiobfzy5yx0hnld25rrd.png)](https://asciinema.org/a/0lygubiobfzy5yx0hnld25rrd)
 
+
+## Donate me (Поддержи меня) ##
+[![donate](https://www.gpg4win.org/img/bitcoin-logo.png)]
+178nA3zjkF5SzgMC6aZHWDW6p2YnDRfWkp
+
 ## Install (Установка) ##
 ```bash
 pip install -r requirements.txt
