@@ -7,29 +7,36 @@ import requests
 import os
 import signal
 import sys
+import logging
+import argparse
+from os.path import expanduser
 from tqdm import tqdm
 
-class Parser:
+class LorGallery:
+                        
+    def __init__(self, url='https://www.linux.org.ru', archive='/gallery/archive/', debug=False):           
+        if debug:
+            logging.basicConfig(level=logging.DEBUG, format='%(relativeCreated)6d %(threadName)s %(message)s')
         
-    def __init__(self, url='https://www.linux.org.ru', archive='/gallery/archive/'):
         self.lor = url
         self.archive = archive
         self.re_link = r"\/gallery\/archive\/(\d+)\/(\d+)\/"
+        self.user_dir = expanduser("~") + '/' + __name__ + '/'
+        if not os.path.exists(self.user_dir):
+            os.makedirs(self.user_dir)        
         
     def get_list_archive(self):        
         request = requests.get(self.lor + self.archive)
         
         if request.status_code != 200:
-            print('Lor servers is not answer')
-            exit()
+            print('lor servers is not answer')
+            sys.exit(0)
     
-
         len_archive = len(set(re.findall(self.re_link, request.text))) - 1
     
         soup_object = self.get_soup_object(request.text)
         archive_container = soup_object.findAll('a', href=True)
             
-        
         signal.signal(signal.SIGINT, self.signal_handler)
         print('Press Ctrl+C for exit script')
 
@@ -45,9 +52,9 @@ class Parser:
                 request = requests.get(self.lor + href)
                 
                 if request.status_code != 200:
-                    print('Lor server is not answer')
+                    print('lor servers is not answer')
                 
-                dir = href.replace('/', '_')[1:-1]
+                dir = self.user_dir + href.replace('/', '_')[1:-1]
                 
                 if not os.path.exists(dir):
                     os.makedirs(dir)
@@ -77,15 +84,14 @@ class Parser:
             
     def download_image(self, url, path, name):
         response = requests.get(url, stream=True)
-        with open(path + '/' + name + '.png', 'wb') as out_file:
-            shutil.copyfileobj(response.raw, out_file)
+        with open(os.path.join(self.user_dir, path, '{}.png'.format(name)), 'wb') as file:
+            shutil.copyfileobj(response.raw, file)
         del response
         
     def write_description(self, text, path, name):
-        file = open(path + '/' + name + '.txt', 'w') 
-        file.write(self.remove_last_line_from_string(text))
-        
-        file.close() 
+        with open(os.path.join(self.user_dir, path, '{}.txt'.format(name)), 'w') as file:
+            file.write(self.remove_last_line_from_string(text))
+            file.close()
         
     def signal_handler(self, signal, frame):
         print('You pressed Ctrl+C!')
@@ -97,9 +103,24 @@ class Parser:
         return '\n'.join(s)
             
     def get_soup_object(self, html):
-        return BeautifulSoup(html, 'html.parser')
+        return BeautifulSoup(html, 'html.parser')    
     
-if __name__ == "__main__":
-    parser = Parser()
-    parser.get_list_archive()
-        
+class argsParser():
+    def create_cli_parser(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument ('--debug', help='debug mode', action='store_true')
+    
+        return parser
+
+if __name__ == "__main__":   
+    argsParser = argsParser()
+    args = argsParser.create_cli_parser()
+    namespace = args.parse_args()
+    
+    debug = False
+                
+    if namespace.debug:
+        debug = True
+    
+    lorgallery = LorGallery(debug=debug)
+    lorgallery.get_list_archive()
