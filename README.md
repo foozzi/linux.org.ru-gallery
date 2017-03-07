@@ -1,4 +1,4 @@
-Linux.org.ru historical gallery! (Linux.org.ru историческая геллерея)
+Linux.org.ru historical gallery! (Linux.org.ru историческая галерея)
 ===================
 
 This script can be downloads all screenshots from linux.org.ru from 1999 year! (https://www.linux.org.ru/gallery/archive/)
@@ -26,6 +26,6 @@ cd lorgallery && python setup.py install
 
 then run (далее запустить)
 ```bash
-lorgallery
+python -m lor_gallery
 ```
 
